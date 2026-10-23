@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
+import '../core/helpers.dart';
 import '../widgets/qnex_bottom_bar.dart';
 
 enum TrxStatus { berhasil, gagal }
@@ -12,36 +13,6 @@ class TrxItem {
   final TrxStatus status;
 
   TrxItem(this.id, this.amount, this.method, this.time, this.status);
-}
-
-String _rupiah(int v) {
-  final s = v.toString();
-  final buf = StringBuffer();
-  for (var i = 0; i < s.length; i++) {
-    if (i > 0 && (s.length - i) % 3 == 0) buf.write('.');
-    buf.write(s[i]);
-  }
-  return 'Rp $buf';
-}
-
-String _fmtDate(DateTime d) {
-  const bulan = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'Mei',
-    'Jun',
-    'Jul',
-    'Agu',
-    'Sep',
-    'Okt',
-    'Nov',
-    'Des',
-  ];
-  final hh = d.hour.toString().padLeft(2, '0');
-  final mm = d.minute.toString().padLeft(2, '0');
-  return '${d.day} ${bulan[d.month - 1]} ${d.year}, $hh:$mm';
 }
 
 class TransactionHistoryPage extends StatefulWidget {
@@ -347,7 +318,7 @@ class _TrxCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        _rupiah(item.amount),
+                        formatRupiah(item.amount),
                         style: const TextStyle(
                           color: AppColors.amountGrey,
                           fontWeight: FontWeight.w600,
@@ -356,7 +327,7 @@ class _TrxCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${item.method} • ${_fmtDate(item.time)}',
+                        '${item.method} • ${formatDate(item.time)}',
                         style: const TextStyle(
                           color: AppColors.idGrey,
                           fontSize: 12,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
 import '../widgets/qnex_bottom_bar.dart';
+import 'inventory_page.dart';
 import 'transaction_history_page.dart';
 
 /// ---------- Data dummy (nanti diganti data asli dari database) ----------
@@ -56,6 +57,13 @@ class _OwnerDashboardPageState extends State<OwnerDashboardPage> {
     _RecentTrx('TRX250412000', 'Rp 25.000', 'Tunai • 13:17', true),
     _RecentTrx('TRX250411097', 'Rp 18.000', 'QRIS • 15:52', false),
   ];
+
+  void _openInventory({InventoryFilter filter = InventoryFilter.all}) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => InventoryPage(initialFilter: filter)),
+    );
+  }
 
   void _openHistory() {
     Navigator.push(
@@ -140,7 +148,7 @@ class _OwnerDashboardPageState extends State<OwnerDashboardPage> {
               _QuickAction(
                 icon: Icons.inventory_2_outlined,
                 label: 'Isi\nStok',
-                onTap: () {},
+                onTap: _openInventory,
               ),
               _QuickAction(
                 icon: Icons.group_outlined,
@@ -166,7 +174,7 @@ class _OwnerDashboardPageState extends State<OwnerDashboardPage> {
           _SectionTitle(
             'Stok Menipis',
             actionLabel: 'Lihat semua',
-            onAction: () {},
+            onAction: () => _openInventory(filter: InventoryFilter.low),
           ),
           const SizedBox(height: 12),
           ..._lowStock.map((item) => _LowStockTile(item: item)),
@@ -587,7 +595,13 @@ class _OwnerDrawer extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.inventory_2_outlined),
               title: const Text('Produk & Stok'),
-              onTap: () {},
+              onTap: () {
+                Navigator.pop(context); // tutup drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const InventoryPage()),
+                );
+              },
             ),
             ListTile(
               leading: const Icon(Icons.receipt_long_outlined),
