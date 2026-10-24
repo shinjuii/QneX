@@ -41,15 +41,12 @@ class _LoginPageState extends State<LoginPage> {
 
     // TODO: arahkan sesuai peran: owner -> dashboard owner,
     // karyawan -> halaman kasir. Sementara semua ke dashboard owner.
-    Navigator.of(
-      context,
-    ).pushReplacement(fadeRoute(const OwnerDashboardPage()));
+    Navigator.of(context).pushReplacement(fadeRoute(const OwnerDashboardPage()));
   }
 
   Future<void> _openRegister() async {
-    final registered = await Navigator.of(
-      context,
-    ).push<bool>(MaterialPageRoute(builder: (_) => const RegisterPage()));
+    final registered = await Navigator.of(context)
+        .push<bool>(MaterialPageRoute(builder: (_) => const RegisterPage()));
     if (registered == true && mounted) {
       showSnack(context, 'Akun berhasil dibuat. Silakan masuk.');
     }
@@ -73,21 +70,13 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         const BrandWord(),
                         const SizedBox(height: 14),
-                        const Text(
-                          'Selamat Datang!',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
+                        const Text('Selamat Datang!',
+                            style: TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.w800)),
                         const SizedBox(height: 4),
-                        const Text(
-                          'Masuk ke akun Anda untuk melanjutkan',
-                          style: TextStyle(
-                            color: AppColors.muted,
-                            fontSize: 13,
-                          ),
-                        ),
+                        const Text('Masuk ke akun Anda untuk melanjutkan',
+                            style:
+                                TextStyle(color: AppColors.muted, fontSize: 13)),
                         const SizedBox(height: 8),
                         const AuthIllustration(),
                         const SizedBox(height: 8),
@@ -114,37 +103,25 @@ class _LoginPageState extends State<LoginPage> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
-                            onPressed: () => showSnack(
-                              context,
-                              'Fitur lupa kata sandi aktif setelah server terhubung.',
-                            ),
+                            onPressed: () => showSnack(context,
+                                'Fitur lupa kata sandi aktif setelah server terhubung.'),
                             style: TextButton.styleFrom(
-                              foregroundColor: AppColors.orange,
-                            ),
-                            child: const Text(
-                              'Lupa kata sandi?',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
+                                foregroundColor: AppColors.orange),
+                            child: const Text('Lupa kata sandi?',
+                                style: TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.w600)),
                           ),
                         ),
                         const SizedBox(height: 4),
                         GradientButton(
-                          label: 'Masuk',
-                          loading: _loading,
-                          onPressed: _submit,
-                        ),
+                            label: 'Masuk', loading: _loading, onPressed: _submit),
                         const Spacer(),
                         const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
-                              'Belum punya akun? ',
-                              style: TextStyle(fontSize: 13),
-                            ),
+                            const Text('Belum punya akun? ',
+                                style: TextStyle(fontSize: 13)),
                             TextButton(
                               onPressed: _openRegister,
                               style: TextButton.styleFrom(
@@ -153,13 +130,9 @@ class _LoginPageState extends State<LoginPage> {
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                 foregroundColor: AppColors.orange,
                               ),
-                              child: const Text(
-                                'Daftar',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
+                              child: const Text('Daftar',
+                                  style: TextStyle(
+                                      fontSize: 13, fontWeight: FontWeight.w800)),
                             ),
                           ],
                         ),

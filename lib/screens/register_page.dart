@@ -77,21 +77,13 @@ class _RegisterPageState extends State<RegisterPage> {
                           ],
                         ),
                         const SizedBox(height: 12),
-                        const Text(
-                          'Buat Akun Baru',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
+                        const Text('Buat Akun Baru',
+                            style: TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.w800)),
                         const SizedBox(height: 4),
-                        const Text(
-                          'Daftarkan usahamu dan mulai kelola dengan QNEX',
-                          style: TextStyle(
-                            color: AppColors.muted,
-                            fontSize: 13,
-                          ),
-                        ),
+                        const Text('Daftarkan usahamu dan mulai kelola dengan QNEX',
+                            style:
+                                TextStyle(color: AppColors.muted, fontSize: 13)),
                         const SizedBox(height: 14),
                         Container(
                           padding: const EdgeInsets.all(12),
@@ -102,11 +94,8 @@ class _RegisterPageState extends State<RegisterPage> {
                           child: const Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Icon(
-                                Icons.info_outline,
-                                size: 18,
-                                color: AppColors.orange,
-                              ),
+                              Icon(Icons.info_outline,
+                                  size: 18, color: AppColors.orange),
                               SizedBox(width: 8),
                               Expanded(
                                 child: Text(
@@ -198,19 +187,14 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         const SizedBox(height: 10),
                         GradientButton(
-                          label: 'Daftar',
-                          loading: _loading,
-                          onPressed: _submit,
-                        ),
+                            label: 'Daftar', loading: _loading, onPressed: _submit),
                         const Spacer(),
                         const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
-                              'Sudah punya akun? ',
-                              style: TextStyle(fontSize: 13),
-                            ),
+                            const Text('Sudah punya akun? ',
+                                style: TextStyle(fontSize: 13)),
                             TextButton(
                               onPressed: () => Navigator.of(context).pop(),
                               style: TextButton.styleFrom(
@@ -219,13 +203,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                 foregroundColor: AppColors.orange,
                               ),
-                              child: const Text(
-                                'Masuk',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
+                              child: const Text('Masuk',
+                                  style: TextStyle(
+                                      fontSize: 13, fontWeight: FontWeight.w800)),
                             ),
                           ],
                         ),

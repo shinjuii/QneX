@@ -10,11 +10,11 @@ const authBackground = BoxDecoration(
 );
 
 Route<T> fadeRoute<T>(Widget page) => PageRouteBuilder<T>(
-  transitionDuration: const Duration(milliseconds: 450),
-  pageBuilder: (_, __, ___) => page,
-  transitionsBuilder: (_, anim, __, child) =>
-      FadeTransition(opacity: anim, child: child),
-);
+      transitionDuration: const Duration(milliseconds: 450),
+      pageBuilder: (_, __, ___) => page,
+      transitionsBuilder: (_, anim, __, child) =>
+          FadeTransition(opacity: anim, child: child),
+    );
 
 void showSnack(BuildContext context, String message) {
   ScaffoldMessenger.of(context)
@@ -58,18 +58,8 @@ String formatRupiah(int v) {
 
 String formatDate(DateTime d, {bool withTime = true}) {
   const bulan = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'Mei',
-    'Jun',
-    'Jul',
-    'Agu',
-    'Sep',
-    'Okt',
-    'Nov',
-    'Des',
+    'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+    'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
   ];
   final base = '${d.day} ${bulan[d.month - 1]} ${d.year}';
   if (!withTime) return base;

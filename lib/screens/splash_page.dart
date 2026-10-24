@@ -34,17 +34,11 @@ class _SplashPageState extends State<SplashPage>
     super.initState();
     _c = AnimationController(vsync: this, duration: _duration);
     _logo = CurvedAnimation(
-      parent: _c,
-      curve: const Interval(0.0, 0.3, curve: Curves.easeOut),
-    );
+        parent: _c, curve: const Interval(0.0, 0.3, curve: Curves.easeOut));
     _illus = CurvedAnimation(
-      parent: _c,
-      curve: const Interval(0.15, 0.5, curve: Curves.easeOut),
-    );
+        parent: _c, curve: const Interval(0.15, 0.5, curve: Curves.easeOut));
     _progress = CurvedAnimation(
-      parent: _c,
-      curve: const Interval(0.1, 1.0, curve: Curves.easeInOut),
-    );
+        parent: _c, curve: const Interval(0.1, 1.0, curve: Curves.easeInOut));
 
     _c.forward().whenComplete(_goNext);
   }
@@ -127,15 +121,13 @@ class _SplashLogo extends StatelessWidget {
           children: [
             Padding(
               padding: EdgeInsets.only(right: 4),
-              child: Text(
-                'QNEX',
-                style: TextStyle(
-                  fontSize: 46,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 2,
-                  color: _SplashColors.brown,
-                ),
-              ),
+              child: Text('QNEX',
+                  style: TextStyle(
+                    fontSize: 46,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 2,
+                    color: _SplashColors.brown,
+                  )),
             ),
             Positioned(
               right: -12,
@@ -175,7 +167,8 @@ class _LoadingBar extends StatelessWidget {
             value: progress.value,
             minHeight: 6,
             backgroundColor: Colors.white.withAlpha(110),
-            valueColor: const AlwaysStoppedAnimation<Color>(AppColors.orange),
+            valueColor:
+                const AlwaysStoppedAnimation<Color>(AppColors.orange),
           ),
         ),
       ),
@@ -207,28 +200,18 @@ class _SplashIllustration extends StatelessWidget {
           ),
           const _Shop(),
           const Positioned(
-            left: 22,
-            top: 70,
-            child: FloatTile(Icons.bar_chart_rounded),
-          ),
+              left: 22, top: 70, child: FloatTile(Icons.bar_chart_rounded)),
           const Positioned(
-            right: 26,
-            top: 24,
-            child: FloatTile(Icons.view_in_ar_outlined),
-          ),
+              right: 26, top: 24, child: FloatTile(Icons.view_in_ar_outlined)),
           const Positioned(
-            left: 26,
-            bottom: 24,
-            child: FloatTile(Icons.credit_card_outlined),
-          ),
+              left: 26,
+              bottom: 24,
+              child: FloatTile(Icons.credit_card_outlined)),
           const Positioned(
             right: 24,
             bottom: 80,
-            child: Icon(
-              Icons.near_me_outlined,
-              size: 34,
-              color: AppColors.orange,
-            ),
+            child: Icon(Icons.near_me_outlined,
+                size: 34, color: AppColors.orange),
           ),
         ],
       ),
@@ -255,9 +238,7 @@ class _Shop extends StatelessWidget {
             child: Container(
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(10),
-                ),
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(10)),
               ),
             ),
           ),
@@ -311,8 +292,7 @@ class _Shop extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: i.isEven ? AppColors.orange : Colors.white,
                       borderRadius: const BorderRadius.vertical(
-                        bottom: Radius.circular(14),
-                      ),
+                          bottom: Radius.circular(14)),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withAlpha(20),

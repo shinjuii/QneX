@@ -25,41 +25,11 @@ class TransactionHistoryPage extends StatefulWidget {
 class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
   // Data dummy (nanti diganti data dari database)
   final List<TrxItem> _all = [
-    TrxItem(
-      'TRX250412001',
-      45000,
-      'QRIS',
-      DateTime(2025, 4, 12, 14, 32),
-      TrxStatus.berhasil,
-    ),
-    TrxItem(
-      'TRX250412000',
-      25000,
-      'Tunai',
-      DateTime(2025, 4, 12, 13, 17),
-      TrxStatus.berhasil,
-    ),
-    TrxItem(
-      'TRX250411099',
-      16000,
-      'QRIS',
-      DateTime(2025, 4, 11, 17, 45),
-      TrxStatus.berhasil,
-    ),
-    TrxItem(
-      'TRX250411098',
-      32000,
-      'Tunai',
-      DateTime(2025, 4, 11, 16, 20),
-      TrxStatus.berhasil,
-    ),
-    TrxItem(
-      'TRX250411097',
-      18000,
-      'QRIS',
-      DateTime(2025, 4, 11, 15, 52),
-      TrxStatus.gagal,
-    ),
+    TrxItem('TRX250412001', 45000, 'QRIS', DateTime(2025, 4, 12, 14, 32), TrxStatus.berhasil),
+    TrxItem('TRX250412000', 25000, 'Tunai', DateTime(2025, 4, 12, 13, 17), TrxStatus.berhasil),
+    TrxItem('TRX250411099', 16000, 'QRIS', DateTime(2025, 4, 11, 17, 45), TrxStatus.berhasil),
+    TrxItem('TRX250411098', 32000, 'Tunai', DateTime(2025, 4, 11, 16, 20), TrxStatus.berhasil),
+    TrxItem('TRX250411097', 18000, 'QRIS', DateTime(2025, 4, 11, 15, 52), TrxStatus.gagal),
   ];
 
   String _query = '';
@@ -88,10 +58,8 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Metode Pembayaran',
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
-            ),
+            const Text('Metode Pembayaran',
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
             const SizedBox(height: 12),
             Wrap(
               spacing: 8,
@@ -129,14 +97,11 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
           icon: const Icon(Icons.arrow_back, color: AppColors.navy),
           onPressed: () => Navigator.maybePop(context),
         ),
-        title: const Text(
-          'Riwayat Transaksi',
-          style: TextStyle(
-            color: AppColors.navy,
-            fontWeight: FontWeight.w600,
-            fontSize: 17,
-          ),
-        ),
+        title: const Text('Riwayat Transaksi',
+            style: TextStyle(
+                color: AppColors.navy,
+                fontWeight: FontWeight.w600,
+                fontSize: 17)),
       ),
       body: Column(
         children: [
@@ -151,13 +116,9 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                     decoration: InputDecoration(
                       hintText: 'Cari transaksi',
                       hintStyle: const TextStyle(
-                        color: AppColors.idGrey,
-                        fontSize: 14,
-                      ),
-                      prefixIcon: const Icon(
-                        Icons.search,
-                        color: AppColors.navy,
-                      ),
+                          color: AppColors.idGrey, fontSize: 14),
+                      prefixIcon:
+                          const Icon(Icons.search, color: AppColors.navy),
                       filled: true,
                       fillColor: Colors.white,
                       contentPadding: const EdgeInsets.symmetric(vertical: 0),
@@ -215,10 +176,8 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
           Expanded(
             child: items.isEmpty
                 ? const Center(
-                    child: Text(
-                      'Transaksi tidak ditemukan',
-                      style: TextStyle(color: AppColors.idGrey),
-                    ),
+                    child: Text('Transaksi tidak ditemukan',
+                        style: TextStyle(color: AppColors.idGrey)),
                   )
                 : ListView.builder(
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
@@ -247,11 +206,8 @@ class _FilterPill extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
 
-  const _FilterPill({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
+  const _FilterPill(
+      {required this.label, required this.selected, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -265,14 +221,12 @@ class _FilterPill extends StatelessWidget {
           child: Container(
             height: 38,
             alignment: Alignment.center,
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: selected ? AppColors.ink : AppColors.idGrey,
-              ),
-            ),
+            child: Text(label,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: selected ? AppColors.ink : AppColors.idGrey,
+                )),
           ),
         ),
       ),
@@ -309,50 +263,35 @@ class _TrxCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '#${item.id}',
-                        style: const TextStyle(
-                          color: AppColors.idGrey,
-                          fontSize: 12,
-                        ),
-                      ),
+                      Text('#${item.id}',
+                          style: const TextStyle(
+                              color: AppColors.idGrey, fontSize: 12)),
                       const SizedBox(height: 4),
-                      Text(
-                        formatRupiah(item.amount),
-                        style: const TextStyle(
-                          color: AppColors.amountGrey,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                        ),
-                      ),
+                      Text(formatRupiah(item.amount),
+                          style: const TextStyle(
+                              color: AppColors.amountGrey,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16)),
                       const SizedBox(height: 4),
-                      Text(
-                        '${item.method} • ${formatDate(item.time)}',
-                        style: const TextStyle(
-                          color: AppColors.idGrey,
-                          fontSize: 12,
-                        ),
-                      ),
+                      Text('${item.method} • ${formatDate(item.time)}',
+                          style: const TextStyle(
+                              color: AppColors.idGrey, fontSize: 12)),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 4,
-                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: ok ? AppColors.successBg : AppColors.dangerBg,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text(
-                    ok ? 'Berhasil' : 'Gagal',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: ok ? AppColors.success : AppColors.danger,
-                    ),
-                  ),
+                  child: Text(ok ? 'Berhasil' : 'Gagal',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: ok ? AppColors.success : AppColors.danger,
+                      )),
                 ),
               ],
             ),

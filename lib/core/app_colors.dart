@@ -26,4 +26,13 @@ class AppColors {
   static const successBg = Color(0xFFEDE7A8);
   static const danger = Color(0xFFE5484D);
   static const dangerBg = Color(0xFFFBE0E3);
+
+  // Inventori & detail produk
+  static const cream = Color(0xFFFFFBEF);
+  static const line = Color(0xFFF3E3A8);
+  static const ok = Color(0xFF2E9E5B);
+  static const okBg = Color(0xFFE3F5EA);
+  static const warnBg = Color(0xFFFFE8D9);
+  static const amber = Color(0xFFB7791F);
+  static const amberBg = Color(0xFFFFF1C9);
 }

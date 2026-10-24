@@ -21,9 +21,8 @@ class _AuthIllustrationState extends State<AuthIllustration>
   void initState() {
     super.initState();
     _c = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2400),
-    )..repeat(reverse: true);
+        vsync: this, duration: const Duration(milliseconds: 2400))
+      ..repeat(reverse: true);
   }
 
   @override
@@ -135,15 +134,13 @@ class _AuthPhone extends StatelessWidget {
                 color: AppColors.orange,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Text(
-                'SCAN',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 8,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 1,
-                ),
-              ),
+              child: const Text('SCAN',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 8,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1,
+                  )),
             ),
           ],
         ),
@@ -181,17 +178,12 @@ class _QrPainter extends CustomPainter {
 
     void finder(int r0, int c0) {
       canvas.drawRect(
-        Rect.fromLTWH(c0 * cell, r0 * cell, 5 * cell, 5 * cell),
-        dark,
-      );
+          Rect.fromLTWH(c0 * cell, r0 * cell, 5 * cell, 5 * cell), dark);
       canvas.drawRect(
-        Rect.fromLTWH((c0 + 1) * cell, (r0 + 1) * cell, 3 * cell, 3 * cell),
-        light,
-      );
+          Rect.fromLTWH((c0 + 1) * cell, (r0 + 1) * cell, 3 * cell, 3 * cell),
+          light);
       canvas.drawRect(
-        Rect.fromLTWH((c0 + 2) * cell, (r0 + 2) * cell, cell, cell),
-        dark,
-      );
+          Rect.fromLTWH((c0 + 2) * cell, (r0 + 2) * cell, cell, cell), dark);
     }
 
     finder(0, 0);

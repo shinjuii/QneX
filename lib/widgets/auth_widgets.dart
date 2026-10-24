@@ -12,15 +12,13 @@ class BrandWord extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.only(right: 4),
-          child: Text(
-            'QNEX',
-            style: TextStyle(
-              fontSize: 34,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 1.5,
-              color: AppColors.gold,
-            ),
-          ),
+          child: Text('QNEX',
+              style: TextStyle(
+                fontSize: 34,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1.5,
+                color: AppColors.gold,
+              )),
         ),
         Positioned(
           right: -10,
@@ -161,15 +159,13 @@ class GradientButton extends StatelessWidget {
                           color: Colors.white,
                         ),
                       )
-                    : Text(
-                        label,
+                    : Text(label,
                         key: const ValueKey('label'),
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w800,
                           fontSize: 16,
-                        ),
-                      ),
+                        )),
               ),
             ),
           ),
@@ -232,14 +228,12 @@ class StrengthBar extends StatelessWidget {
                       ),
                     ),
                   const SizedBox(width: 10),
-                  Text(
-                    labels[level],
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: colors[level],
-                    ),
-                  ),
+                  Text(labels[level],
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: colors[level],
+                      )),
                 ],
               ),
             ),

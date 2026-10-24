@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
 import '../widgets/qnex_bottom_bar.dart';
 import 'inventory_page.dart';
+import 'product_form_page.dart';
 import 'transaction_history_page.dart';
 
 /// ---------- Data dummy (nanti diganti data asli dari database) ----------
@@ -61,7 +62,15 @@ class _OwnerDashboardPageState extends State<OwnerDashboardPage> {
   void _openInventory({InventoryFilter filter = InventoryFilter.all}) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => InventoryPage(initialFilter: filter)),
+      MaterialPageRoute(
+          builder: (_) => InventoryPage(initialFilter: filter)),
+    );
+  }
+
+  void _openProductForm() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const ProductFormPage()),
     );
   }
 
@@ -102,17 +111,14 @@ class _OwnerDashboardPageState extends State<OwnerDashboardPage> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
         children: [
-          Text(
-            'Halo, Owner',
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
-          ),
+          Text('Halo, Owner',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontWeight: FontWeight.w700)),
           const SizedBox(height: 2),
-          const Text(
-            'Ini ringkasan usahamu hari ini.',
-            style: TextStyle(color: AppColors.muted, fontSize: 13),
-          ),
+          const Text('Ini ringkasan usahamu hari ini.',
+              style: TextStyle(color: AppColors.muted, fontSize: 13)),
           const SizedBox(height: 16),
           const _PromoBanner(),
           const SizedBox(height: 24),
@@ -126,12 +132,10 @@ class _OwnerDashboardPageState extends State<OwnerDashboardPage> {
             crossAxisSpacing: 12,
             childAspectRatio: 1.5,
             children: _summary
-                .map(
-                  (s) => _StatCard(
-                    stat: s,
-                    onTap: s.toHistory ? _openHistory : null,
-                  ),
-                )
+                .map((s) => _StatCard(
+                      stat: s,
+                      onTap: s.toHistory ? _openHistory : null,
+                    ))
                 .toList(),
           ),
           const SizedBox(height: 24),
@@ -141,41 +145,32 @@ class _OwnerDashboardPageState extends State<OwnerDashboardPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _QuickAction(
-                icon: Icons.add_box_outlined,
-                label: 'Tambah\nProduk',
-                onTap: () {},
-              ),
+                  icon: Icons.add_box_outlined,
+                  label: 'Tambah\nProduk',
+                  onTap: _openProductForm),
               _QuickAction(
-                icon: Icons.inventory_2_outlined,
-                label: 'Isi\nStok',
-                onTap: _openInventory,
-              ),
+                  icon: Icons.inventory_2_outlined,
+                  label: 'Isi\nStok',
+                  onTap: _openInventory),
               _QuickAction(
-                icon: Icons.group_outlined,
-                label: 'Kelola\nKaryawan',
-                onTap: () {},
-              ),
+                  icon: Icons.group_outlined,
+                  label: 'Kelola\nKaryawan',
+                  onTap: () {}),
               _QuickAction(
-                icon: Icons.bar_chart_rounded,
-                label: 'Laporan\nPenjualan',
-                onTap: () {},
-              ),
+                  icon: Icons.bar_chart_rounded,
+                  label: 'Laporan\nPenjualan',
+                  onTap: () {}),
             ],
           ),
           const SizedBox(height: 24),
-          _SectionTitle(
-            'Transaksi Terbaru',
-            actionLabel: 'Lihat semua',
-            onAction: _openHistory,
-          ),
+          _SectionTitle('Transaksi Terbaru',
+              actionLabel: 'Lihat semua', onAction: _openHistory),
           const SizedBox(height: 12),
           ..._recent.map((t) => _RecentTrxTile(item: t, onTap: _openHistory)),
           const SizedBox(height: 14),
-          _SectionTitle(
-            'Stok Menipis',
-            actionLabel: 'Lihat semua',
-            onAction: () => _openInventory(filter: InventoryFilter.low),
-          ),
+          _SectionTitle('Stok Menipis',
+              actionLabel: 'Lihat semua',
+              onAction: () => _openInventory(filter: InventoryFilter.low)),
           const SizedBox(height: 12),
           ..._lowStock.map((item) => _LowStockTile(item: item)),
         ],
@@ -208,24 +203,18 @@ class _Logo extends StatelessWidget {
             border: Border.all(color: AppColors.gold, width: 2),
             borderRadius: BorderRadius.circular(4),
           ),
-          child: const Text(
-            'Q',
-            style: TextStyle(
-              color: AppColors.gold,
-              fontWeight: FontWeight.w800,
-              fontSize: 18,
-            ),
-          ),
+          child: const Text('Q',
+              style: TextStyle(
+                  color: AppColors.gold,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 18)),
         ),
         const SizedBox(width: 6),
-        const Text(
-          'Q-NEX',
-          style: TextStyle(
-            color: AppColors.gold,
-            fontWeight: FontWeight.w800,
-            fontSize: 16,
-          ),
-        ),
+        const Text('Q-NEX',
+            style: TextStyle(
+                color: AppColors.gold,
+                fontWeight: FontWeight.w800,
+                fontSize: 16)),
       ],
     );
   }
@@ -254,19 +243,14 @@ class _PromoBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  'Temukan',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w800,
-                    fontSize: 20,
-                  ),
-                ),
+                const Text('Temukan',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 20)),
                 const SizedBox(height: 2),
-                const Text(
-                  'Tempat Strategis\nUntuk Jualanmu',
-                  style: TextStyle(color: Colors.white, fontSize: 11),
-                ),
+                const Text('Tempat Strategis\nUntuk Jualanmu',
+                    style: TextStyle(color: Colors.white, fontSize: 11)),
                 const SizedBox(height: 12),
                 OutlinedButton(
                   onPressed: () {},
@@ -274,24 +258,17 @@ class _PromoBanner extends StatelessWidget {
                     foregroundColor: Colors.white,
                     side: const BorderSide(color: Colors.white),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 0,
-                    ),
+                        borderRadius: BorderRadius.circular(8)),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
                     minimumSize: const Size(0, 30),
                   ),
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        'MAPS',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
+                      Text('MAPS',
+                          style: TextStyle(
+                              fontSize: 11, fontWeight: FontWeight.w700)),
                       SizedBox(width: 4),
                       Icon(Icons.arrow_forward, size: 14),
                     ],
@@ -319,21 +296,16 @@ class _SectionTitle extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
-        ),
+        Text(title,
+            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
         if (actionLabel != null)
           GestureDetector(
             onTap: onAction,
-            child: Text(
-              actionLabel!,
-              style: const TextStyle(
-                color: AppColors.orange,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            child: Text(actionLabel!,
+                style: const TextStyle(
+                    color: AppColors.orange,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600)),
           ),
       ],
     );
@@ -364,11 +336,8 @@ class _StatCard extends StatelessWidget {
                 children: [
                   Icon(stat.icon, color: AppColors.orange, size: 22),
                   if (onTap != null)
-                    const Icon(
-                      Icons.arrow_forward_ios,
-                      size: 12,
-                      color: AppColors.orange,
-                    ),
+                    const Icon(Icons.arrow_forward_ios,
+                        size: 12, color: AppColors.orange),
                 ],
               ),
               Column(
@@ -377,21 +346,13 @@ class _StatCard extends StatelessWidget {
                   FittedBox(
                     fit: BoxFit.scaleDown,
                     alignment: Alignment.centerLeft,
-                    child: Text(
-                      stat.value,
+                    child: Text(stat.value,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w800, fontSize: 18)),
+                  ),
+                  Text(stat.label,
                       style: const TextStyle(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    stat.label,
-                    style: const TextStyle(
-                      color: AppColors.muted,
-                      fontSize: 11,
-                    ),
-                  ),
+                          color: AppColors.muted, fontSize: 11)),
                 ],
               ),
             ],
@@ -429,53 +390,37 @@ class _RecentTrxTile extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '#${item.id}',
-                        style: const TextStyle(
-                          color: AppColors.muted,
-                          fontSize: 11,
-                        ),
-                      ),
+                      Text('#${item.id}',
+                          style: const TextStyle(
+                              color: AppColors.muted, fontSize: 11)),
                       const SizedBox(height: 2),
-                      Text(
-                        item.amount,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
-                        ),
-                      ),
+                      Text(item.amount,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w700, fontSize: 14)),
                       const SizedBox(height: 2),
-                      Text(
-                        item.info,
-                        style: const TextStyle(
-                          color: AppColors.muted,
-                          fontSize: 11,
-                        ),
-                      ),
+                      Text(item.info,
+                          style: const TextStyle(
+                              color: AppColors.muted, fontSize: 11)),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: item.success
                         ? AppColors.successBg
                         : AppColors.dangerBg,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text(
-                    item.success ? 'Berhasil' : 'Gagal',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: item.success
-                          ? AppColors.success
-                          : AppColors.danger,
-                    ),
-                  ),
+                  child: Text(item.success ? 'Berhasil' : 'Gagal',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: item.success
+                            ? AppColors.success
+                            : AppColors.danger,
+                      )),
                 ),
               ],
             ),
@@ -490,11 +435,8 @@ class _QuickAction extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
-  const _QuickAction({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
+  const _QuickAction(
+      {required this.icon, required this.label, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -515,11 +457,9 @@ class _QuickAction extends StatelessWidget {
               child: Icon(icon, color: AppColors.orange),
             ),
             const SizedBox(height: 6),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 11, height: 1.2),
-            ),
+            Text(label,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 11, height: 1.2)),
           ],
         ),
       ),
@@ -547,21 +487,14 @@ class _LowStockTile extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                item.name,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                ),
-              ),
-              Text(
-                'Sisa ${item.left}',
-                style: const TextStyle(
-                  color: AppColors.danger,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 12,
-                ),
-              ),
+              Text(item.name,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w600, fontSize: 13)),
+              Text('Sisa ${item.left}',
+                  style: const TextStyle(
+                      color: AppColors.danger,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12)),
             ],
           ),
           const SizedBox(height: 8),
@@ -590,19 +523,21 @@ class _OwnerDrawer extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(padding: EdgeInsets.all(20), child: _Logo()),
+            const Padding(
+              padding: EdgeInsets.all(20),
+              child: _Logo(),
+            ),
             const Divider(height: 1),
             ListTile(
-              leading: const Icon(Icons.inventory_2_outlined),
-              title: const Text('Produk & Stok'),
-              onTap: () {
-                Navigator.pop(context); // tutup drawer
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const InventoryPage()),
-                );
-              },
-            ),
+                leading: const Icon(Icons.inventory_2_outlined),
+                title: const Text('Produk & Stok'),
+                onTap: () {
+                  Navigator.pop(context); // tutup drawer
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const InventoryPage()),
+                  );
+                }),
             ListTile(
               leading: const Icon(Icons.receipt_long_outlined),
               title: const Text('Riwayat Transaksi'),
@@ -611,27 +546,23 @@ class _OwnerDrawer extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const TransactionHistoryPage(),
-                  ),
+                      builder: (_) => const TransactionHistoryPage()),
                 );
               },
             ),
             ListTile(
-              leading: const Icon(Icons.group_outlined),
-              title: const Text('Karyawan'),
-              onTap: () {},
-            ),
+                leading: const Icon(Icons.group_outlined),
+                title: const Text('Karyawan'),
+                onTap: () {}),
             ListTile(
-              leading: const Icon(Icons.bar_chart_rounded),
-              title: const Text('Laporan'),
-              onTap: () {},
-            ),
+                leading: const Icon(Icons.bar_chart_rounded),
+                title: const Text('Laporan'),
+                onTap: () {}),
             const Spacer(),
             ListTile(
-              leading: const Icon(Icons.logout, color: AppColors.danger),
-              title: const Text('Keluar'),
-              onTap: () {},
-            ),
+                leading: const Icon(Icons.logout, color: AppColors.danger),
+                title: const Text('Keluar'),
+                onTap: () {}),
           ],
         ),
       ),
