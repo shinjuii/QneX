@@ -97,7 +97,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
     return null;
   }
 
-  void _save() {
+  Future<void> _save() async {
     FocusScope.of(context).unfocus();
     if (!_form.currentState!.validate()) return;
 
@@ -125,10 +125,11 @@ class _ProductFormPageState extends State<ProductFormPage> {
         ..photo = _photo;
       if (categoryChanged) p.icon = iconForCategory(_category);
       _store.update();
+      if (!mounted) return;
       showSnack(context, 'Perubahan produk disimpan');
     } else {
       final stock = int.parse(_stock.text.trim());
-      _store.add(Product(
+      await _store.add(Product(
         id: _store.newId(),
         name: name,
         category: _category,
@@ -145,9 +146,10 @@ class _ProductFormPageState extends State<ProductFormPage> {
         icon: iconForCategory(_category),
         history: stock > 0 ? [StockLog(_entry, stock, 'Stok awal')] : [],
       ));
+      if (!mounted) return;
       showSnack(context, '$name ditambahkan ke inventori');
     }
-    Navigator.pop(context);
+    if (mounted) Navigator.pop(context);
   }
 
   @override
@@ -172,7 +174,6 @@ class _ProductFormPageState extends State<ProductFormPage> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
           children: [
-            // Foto produk
             Center(
               child: Column(
                 children: [
@@ -188,25 +189,25 @@ class _ProductFormPageState extends State<ProductFormPage> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(24),
                           border:
-                              Border.all(color: AppColors.line, width: 1.5),
+                          Border.all(color: AppColors.line, width: 1.5),
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(22),
                           child: _photo != null
                               ? Image.memory(_photo!,
-                                  fit: BoxFit.cover, gaplessPlayback: true)
+                              fit: BoxFit.cover, gaplessPlayback: true)
                               : const Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.add_a_photo_outlined,
-                                        color: AppColors.orange, size: 30),
-                                    SizedBox(height: 6),
-                                    Text('Tambah foto',
-                                        style: TextStyle(
-                                            color: AppColors.muted,
-                                            fontSize: 12)),
-                                  ],
-                                ),
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add_a_photo_outlined,
+                                  color: AppColors.orange, size: 30),
+                              SizedBox(height: 6),
+                              Text('Tambah foto',
+                                  style: TextStyle(
+                                      color: AppColors.muted,
+                                      fontSize: 12)),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -309,7 +310,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                     Expanded(
                       child: Text(
                         'Jumlah stok diubah lewat tombol Stok Masuk di halaman '
-                        'detail supaya tercatat di riwayat.',
+                            'detail supaya tercatat di riwayat.',
                         style: TextStyle(fontSize: 11.5, height: 1.4),
                       ),
                     ),
@@ -410,7 +411,6 @@ class _ProductFormPageState extends State<ProductFormPage> {
   }
 }
 
-/// ---------- Komponen form ----------
 class _Label extends StatelessWidget {
   final String text;
   const _Label(this.text);
@@ -421,9 +421,9 @@ class _Label extends StatelessWidget {
 }
 
 OutlineInputBorder _border(Color c, [double w = 1]) => OutlineInputBorder(
-      borderRadius: BorderRadius.circular(14),
-      borderSide: BorderSide(color: c, width: w),
-    );
+  borderRadius: BorderRadius.circular(14),
+  borderSide: BorderSide(color: c, width: w),
+);
 
 class _LabeledField extends StatelessWidget {
   final String label;
@@ -460,9 +460,9 @@ class _LabeledField extends StatelessWidget {
           textCapitalization: capitalization,
           inputFormatters: number
               ? [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(9),
-                ]
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(9),
+          ]
               : null,
           style: const TextStyle(fontSize: 14),
           decoration: InputDecoration(
@@ -473,7 +473,7 @@ class _LabeledField extends StatelessWidget {
             filled: true,
             fillColor: Colors.white,
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
             border: _border(AppColors.line),
             enabledBorder: _border(AppColors.line),
             focusedBorder: _border(AppColors.gold, 1.8),

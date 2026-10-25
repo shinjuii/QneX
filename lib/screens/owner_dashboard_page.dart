@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/app_colors.dart';
+import '../core/helpers.dart';
 import '../widgets/qnex_bottom_bar.dart';
 import '../data/session_store.dart';
+import '../data/product_store.dart';
+import '../models/product.dart';
 import '../widgets/logout.dart';
 import 'inventory_page.dart';
 import 'product_form_page.dart';
 import 'transaction_history_page.dart';
 import 'weekly_report_page.dart';
 
-/// ---------- Data dummy (nanti diganti data asli dari database) ----------
 class _Stat {
   final String label;
   final String value;
@@ -42,39 +45,101 @@ class OwnerDashboardPage extends StatefulWidget {
 
 class _OwnerDashboardPageState extends State<OwnerDashboardPage> {
   int _tab = 0;
+  final SupabaseClient _supabase = Supabase.instance.client;
+  final ProductStore _productStore = ProductStore.instance;
 
-  static const _summary = [
-    _Stat('Penjualan Hari Ini', 'Rp 1.250.000', Icons.payments_outlined),
-    _Stat('Transaksi', '38', Icons.receipt_long_outlined, toHistory: true),
-    _Stat('Produk Terjual', '126', Icons.shopping_bag_outlined),
-    _Stat('Stok Menipis', '5', Icons.warning_amber_rounded),
-  ];
+  double _todaySales = 0;
+  int _todayTxCount = 0;
+  int _todayItemsSold = 0;
+  List<Map<String, dynamic>> _recentTransactions = [];
+  bool _isLoading = true;
 
-  static const _lowStock = [
-    _LowStock('Kopi Susu Botol', 3, 30),
-    _LowStock('Roti Coklat', 5, 40),
-    _LowStock('Air Mineral 600ml', 8, 60),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _productStore.addListener(_onStoreChanged);
+    _fetchDashboardData();
+  }
 
-  static const _recent = [
-    _RecentTrx('TRX250412001', 'Rp 45.000', 'QRIS • 14:32', true),
-    _RecentTrx('TRX250412000', 'Rp 25.000', 'Tunai • 13:17', true),
-    _RecentTrx('TRX250411097', 'Rp 18.000', 'QRIS • 15:52', false),
-  ];
+  @override
+  void dispose() {
+    _productStore.removeListener(_onStoreChanged);
+    super.dispose();
+  }
+
+  void _onStoreChanged() {
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _fetchDashboardData() async {
+    setState(() => _isLoading = true);
+    try {
+      final now = DateTime.now();
+      final startOfDay = DateTime(now.year, now.month, now.day).toIso8601String();
+
+      // 1. Ambil transaksi hari ini dari Supabase
+      final txResponse = await _supabase
+          .from('transactions')
+          .select('id, total_amount, payment_method, status, created_at')
+          .gte('created_at', startOfDay)
+          .order('created_at', ascending: false);
+
+      double salesSum = 0;
+      int txCount = txResponse.length;
+      List<String> todayTxIds = [];
+
+      for (var tx in txResponse) {
+        if (tx['status'] == 'Berhasil') {
+          salesSum += (tx['total_amount'] as num?)?.toDouble() ?? 0;
+          todayTxIds.add(tx['id'].toString());
+        }
+      }
+
+      // 2. Hitung jumlah produk terjual hari ini dari transaction_items
+      int itemsSold = 0;
+      if (todayTxIds.isNotEmpty) {
+        final itemsResponse = await _supabase
+            .from('transaction_items')
+            .select('qty')
+            .inFilter('transaction_id', todayTxIds);
+        for (var item in itemsResponse) {
+          itemsSold += (item['qty'] as num?)?.toInt() ?? 0;
+        }
+      }
+
+      // 3. Ambil daftar transaksi terbaru (untuk list)
+      final recentResponse = await _supabase
+          .from('transactions')
+          .select('id, total_amount, payment_method, status, created_at')
+          .order('created_at', ascending: false)
+          .limit(5);
+
+      setState(() {
+        _todaySales = salesSum;
+        _todayTxCount = txCount;
+        _todayItemsSold = itemsSold;
+        _recentTransactions = List<Map<String, dynamic>>.from(recentResponse);
+        _isLoading = false;
+      });
+    } catch (e) {
+      debugPrint('Gagal memuat data dashboard: $e');
+      setState(() => _isLoading = false);
+    }
+  }
 
   void _openInventory({InventoryFilter filter = InventoryFilter.all}) {
     Navigator.push(
       context,
       MaterialPageRoute(
           builder: (_) => InventoryPage(initialFilter: filter)),
-    );
+    ).then((_) => _fetchDashboardData());
   }
 
   void _openProductForm() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const ProductFormPage()),
-    );
+    ).then((_) => _fetchDashboardData());
   }
 
   void _openReport() {
@@ -88,11 +153,14 @@ class _OwnerDashboardPageState extends State<OwnerDashboardPage> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const TransactionHistoryPage()),
-    );
+    ).then((_) => _fetchDashboardData());
   }
 
   @override
   Widget build(BuildContext context) {
+    // Ambil data produk stok menipis langsung dari ProductStore yang sama dengan Inventori
+    final lowStockProducts = _productStore.products.where((p) => p.isLow).toList();
+
     return Scaffold(
       drawer: const _OwnerDrawer(),
       appBar: AppBar(
@@ -118,82 +186,141 @@ class _OwnerDashboardPageState extends State<OwnerDashboardPage> {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
-        children: [
-          Text('Halo, ${SessionStore.instance.current.name}',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge
-                  ?.copyWith(fontWeight: FontWeight.w700)),
-          const SizedBox(height: 2),
-          const Text('Ini ringkasan usahamu hari ini.',
-              style: TextStyle(color: AppColors.muted, fontSize: 13)),
-          const SizedBox(height: 16),
-          const _PromoBanner(),
-          const SizedBox(height: 24),
-          const _SectionTitle('Ringkasan Hari Ini'),
-          const SizedBox(height: 12),
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 1.5,
-            children: _summary
-                .map((s) => _StatCard(
-                      stat: s,
-                      onTap: s.toHistory ? _openHistory : null,
-                    ))
-                .toList(),
-          ),
-          const SizedBox(height: 24),
-          const _SectionTitle('Menu Cepat'),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _QuickAction(
-                  icon: Icons.add_box_outlined,
-                  label: 'Tambah\nProduk',
-                  onTap: _openProductForm),
-              _QuickAction(
-                  icon: Icons.inventory_2_outlined,
-                  label: 'Isi\nStok',
-                  onTap: _openInventory),
-              _QuickAction(
-                  icon: Icons.group_outlined,
-                  label: 'Kelola\nKaryawan',
-                  onTap: () {}),
-              _QuickAction(
-                  icon: Icons.bar_chart_rounded,
-                  label: 'Laporan\nPenjualan',
-                  onTap: _openReport),
-            ],
-          ),
-          const SizedBox(height: 24),
-          _SectionTitle('Transaksi Terbaru',
-              actionLabel: 'Lihat semua', onAction: _openHistory),
-          const SizedBox(height: 12),
-          ..._recent.map((t) => _RecentTrxTile(item: t, onTap: _openHistory)),
-          const SizedBox(height: 14),
-          _SectionTitle('Stok Menipis',
-              actionLabel: 'Lihat semua',
-              onAction: () => _openInventory(filter: InventoryFilter.low)),
-          const SizedBox(height: 12),
-          ..._lowStock.map((item) => _LowStockTile(item: item)),
-        ],
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await _productStore.loadProducts();
+          await _fetchDashboardData();
+        },
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
+          children: [
+            Text('Halo, ${SessionStore.instance.current.name}',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(fontWeight: FontWeight.w700)),
+            const SizedBox(height: 2),
+            const Text('Ini ringkasan usahamu hari ini.',
+                style: TextStyle(color: AppColors.muted, fontSize: 13)),
+            const SizedBox(height: 16),
+            const _PromoBanner(),
+            const SizedBox(height: 24),
+            const _SectionTitle('Ringkasan Hari Ini'),
+            const SizedBox(height: 12),
+            GridView.count(
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 1.5,
+              children: [
+                _StatCard(
+                  stat: _Stat(
+                    'Penjualan Hari Ini',
+                    formatRupiah(_todaySales.toInt()),
+                    Icons.payments_outlined,
+                  ),
+                ),
+                _StatCard(
+                  stat: _Stat(
+                    'Transaksi',
+                    '$_todayTxCount',
+                    Icons.receipt_long_outlined,
+                    toHistory: true,
+                  ),
+                  onTap: _openHistory,
+                ),
+                _StatCard(
+                  stat: _Stat(
+                    'Produk Terjual',
+                    '$_todayItemsSold',
+                    Icons.shopping_bag_outlined,
+                  ),
+                ),
+                _StatCard(
+                  stat: _Stat(
+                    'Stok Menipis',
+                    '${lowStockProducts.length}',
+                    Icons.warning_amber_rounded,
+                    toHistory: true,
+                  ),
+                  onTap: () => _openInventory(filter: InventoryFilter.low),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            const _SectionTitle('Menu Cepat'),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _QuickAction(
+                    icon: Icons.add_box_outlined,
+                    label: 'Tambah\nProduk',
+                    onTap: _openProductForm),
+                _QuickAction(
+                    icon: Icons.inventory_2_outlined,
+                    label: 'Isi\nStok',
+                    onTap: _openInventory),
+                _QuickAction(
+                    icon: Icons.group_outlined,
+                    label: 'Kelola\nKaryawan',
+                    onTap: () {}),
+                _QuickAction(
+                    icon: Icons.bar_chart_rounded,
+                    label: 'Laporan\nPenjualan',
+                    onTap: _openReport),
+              ],
+            ),
+            const SizedBox(height: 24),
+            _SectionTitle('Transaksi Terbaru',
+                actionLabel: 'Lihat semua', onAction: _openHistory),
+            const SizedBox(height: 12),
+            if (_recentTransactions.isEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Center(
+                    child: Text('Belum ada transaksi',
+                        style: TextStyle(color: AppColors.muted))),
+              )
+            else
+              ..._recentTransactions.map((t) {
+                final isSuccess = t['status'] == 'Berhasil';
+                final amount = formatRupiah(
+                    (t['total_amount'] as num?)?.toInt() ?? 0);
+                final method = t['payment_method'] ?? 'Tunai';
+                return _RecentTrxTile(
+                  item: _RecentTrx(t['id'].toString(), amount, method, isSuccess),
+                  onTap: _openHistory,
+                );
+              }),
+            const SizedBox(height: 14),
+            _SectionTitle('Stok Menipis',
+                actionLabel: 'Lihat semua',
+                onAction: () => _openInventory(filter: InventoryFilter.low)),
+            const SizedBox(height: 12),
+            if (lowStockProducts.isEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Center(
+                    child: Text('Semua stok aman',
+                        style: TextStyle(color: AppColors.muted))),
+              )
+            else
+              ...lowStockProducts.take(3).map((p) => _LowStockTile(
+                item: _LowStock(p.name, p.stock, p.capacity > 0 ? p.capacity : 50),
+              )),
+          ],
+        ),
       ),
-
-      // Bottom bar sekarang tinggal dipanggil
       floatingActionButtonLocation: QnexCartFab.location,
       floatingActionButton: const QnexCartFab(),
       bottomNavigationBar: QnexBottomBar(
         currentIndex: _tab,
         onTap: (i) {
           if (i == 4) {
-            qnexGoTo(context, i); // buka Pengaturan
+            qnexGoTo(context, i);
           } else {
             setState(() => _tab = i);
           }
@@ -203,13 +330,12 @@ class _OwnerDashboardPageState extends State<OwnerDashboardPage> {
   }
 }
 
-/// ---------- Komponen-komponen ----------
+/// ---------- Komponen-komponen Pendukung ----------
 class _Logo extends StatelessWidget {
   const _Logo();
 
   @override
   Widget build(BuildContext context) {
-    // Placeholder. Ganti dengan Image.asset('assets/logo.png') kalau sudah ada file logonya.
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -276,7 +402,7 @@ class _PromoBanner extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8)),
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
                     minimumSize: const Size(0, 30),
                   ),
                   child: const Row(
@@ -293,7 +419,6 @@ class _PromoBanner extends StatelessWidget {
               ],
             ),
           ),
-          // Placeholder gambar HP di Figma. Ganti dengan Image.asset(...) nanti.
           const Icon(Icons.phone_android, size: 90, color: Colors.white70),
         ],
       ),
@@ -422,7 +547,7 @@ class _RecentTrxTile extends StatelessWidget {
                 ),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: item.success
                         ? AppColors.successBg
@@ -517,7 +642,7 @@ class _LowStockTile extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(6),
             child: LinearProgressIndicator(
-              value: item.left / item.max,
+              value: (item.left / item.max).clamp(0.0, 1.0),
               minHeight: 6,
               backgroundColor: const Color(0xFFF1F1F1),
               color: AppColors.danger,
@@ -548,7 +673,7 @@ class _OwnerDrawer extends StatelessWidget {
                 leading: const Icon(Icons.inventory_2_outlined),
                 title: const Text('Produk & Stok'),
                 onTap: () {
-                  Navigator.pop(context); // tutup drawer
+                  Navigator.pop(context);
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const InventoryPage()),
@@ -558,7 +683,7 @@ class _OwnerDrawer extends StatelessWidget {
               leading: const Icon(Icons.receipt_long_outlined),
               title: const Text('Riwayat Transaksi'),
               onTap: () {
-                Navigator.pop(context); // tutup drawer
+                Navigator.pop(context);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -574,7 +699,7 @@ class _OwnerDrawer extends StatelessWidget {
                 leading: const Icon(Icons.bar_chart_rounded),
                 title: const Text('Laporan'),
                 onTap: () {
-                  Navigator.pop(context); // tutup drawer
+                  Navigator.pop(context);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
