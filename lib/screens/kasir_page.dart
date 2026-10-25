@@ -53,8 +53,7 @@ class _KasirPageState extends State<KasirPage> {
     final q = _query.trim().toLowerCase();
     return _store.products.where((p) {
       final okQuery = p.name.toLowerCase().contains(q);
-      final okCat =
-          _cat == 'Semua' ||
+      final okCat = _cat == 'Semua' ||
           (_cat == 'Lainnya'
               ? (p.category != 'Minuman' && p.category != 'Makanan')
               : p.category == _cat);
@@ -118,25 +117,21 @@ class _KasirPageState extends State<KasirPage> {
             ),
           ),
         ),
-        title: const Text(
-          'Kasir / POS',
-          style: TextStyle(
-            color: AppColors.orange,
-            fontWeight: FontWeight.w800,
-            fontSize: 19,
-          ),
-        ),
+        title: const Text('Kasir / POS',
+            style: TextStyle(
+                color: AppColors.orange,
+                fontWeight: FontWeight.w800,
+                fontSize: 19)),
         actions: [
           IconButton(
             tooltip: 'Riwayat transaksi',
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const TransactionHistoryPage()),
+              MaterialPageRoute(
+                  builder: (_) => const TransactionHistoryPage()),
             ),
-            icon: const Icon(
-              Icons.receipt_long_outlined,
-              color: AppColors.orange,
-            ),
+            icon: const Icon(Icons.receipt_long_outlined,
+                color: AppColors.orange),
           ),
           const SizedBox(width: 4),
         ],
@@ -150,21 +145,15 @@ class _KasirPageState extends State<KasirPage> {
               onChanged: (v) => setState(() => _query = v),
               decoration: InputDecoration(
                 hintText: 'Cari produk...',
-                hintStyle: const TextStyle(
-                  color: AppColors.muted,
-                  fontSize: 14,
-                ),
+                hintStyle:
+                    const TextStyle(color: AppColors.muted, fontSize: 14),
                 prefixIcon: const Icon(Icons.search, color: AppColors.orange),
                 suffixIcon: IconButton(
                   tooltip: 'Scan barcode',
-                  icon: const Icon(
-                    Icons.qr_code_scanner,
-                    color: AppColors.muted,
-                  ),
-                  onPressed: () => showSnack(
-                    context,
-                    'Scan barcode akan aktif setelah produk punya kode barcode.',
-                  ),
+                  icon: const Icon(Icons.qr_code_scanner,
+                      color: AppColors.muted),
+                  onPressed: () => showSnack(context,
+                      'Scan barcode akan aktif setelah produk punya kode barcode.'),
                 ),
                 filled: true,
                 fillColor: Colors.white,
@@ -175,10 +164,8 @@ class _KasirPageState extends State<KasirPage> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(
-                    color: AppColors.gold,
-                    width: 1.8,
-                  ),
+                  borderSide:
+                      const BorderSide(color: AppColors.gold, width: 1.8),
                 ),
               ),
             ),
@@ -210,26 +197,17 @@ class _KasirPageState extends State<KasirPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          Icons.search_off,
-                          size: 44,
-                          color: AppColors.muted,
-                        ),
+                        Icon(Icons.search_off,
+                            size: 44, color: AppColors.muted),
                         SizedBox(height: 8),
-                        Text(
-                          'Produk tidak ditemukan',
-                          style: TextStyle(color: AppColors.muted),
-                        ),
+                        Text('Produk tidak ditemukan',
+                            style: TextStyle(color: AppColors.muted)),
                       ],
                     ),
                   )
                 : ListView.builder(
                     padding: EdgeInsets.fromLTRB(
-                      20,
-                      0,
-                      20,
-                      _cart.isEmpty ? 24 : 12,
-                    ),
+                        20, 0, 20, _cart.isEmpty ? 24 : 12),
                     itemCount: items.length,
                     itemBuilder: (_, i) {
                       final p = items[i];
@@ -252,7 +230,11 @@ class _KasirPageState extends State<KasirPage> {
         curve: Curves.easeOut,
         child: _cart.isEmpty
             ? const SizedBox(width: double.infinity)
-            : _CartBar(cart: _cart, onOpen: _openCart, onPay: _checkout),
+            : _CartBar(
+                cart: _cart,
+                onOpen: _openCart,
+                onPay: _checkout,
+              ),
       ),
     );
   }
@@ -263,11 +245,8 @@ class _CatChip extends StatelessWidget {
   final String label;
   final bool selected;
   final VoidCallback onTap;
-  const _CatChip({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
+  const _CatChip(
+      {required this.label, required this.selected, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -282,18 +261,15 @@ class _CatChip extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: selected ? AppColors.orange : AppColors.line,
-            ),
+            border:
+                Border.all(color: selected ? AppColors.orange : AppColors.line),
           ),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: selected ? Colors.white : AppColors.ink,
-            ),
-          ),
+          child: Text(label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: selected ? Colors.white : AppColors.ink,
+              )),
         ),
       ),
     );
@@ -342,9 +318,8 @@ class _KasirTile extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: qty > 0 ? AppColors.orange : AppColors.line,
-            width: qty > 0 ? 1.6 : 1,
-          ),
+              color: qty > 0 ? AppColors.orange : AppColors.line,
+              width: qty > 0 ? 1.6 : 1),
         ),
         child: Row(
           children: [
@@ -354,33 +329,23 @@ class _KasirTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    product.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                    ),
-                  ),
+                  Text(product.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w700, fontSize: 14)),
                   const SizedBox(height: 3),
-                  Text(
-                    formatRupiah(product.price),
-                    style: const TextStyle(
-                      color: AppColors.orange,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 13.5,
-                    ),
-                  ),
+                  Text(formatRupiah(product.price),
+                      style: const TextStyle(
+                          color: AppColors.orange,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 13.5)),
                   const SizedBox(height: 3),
-                  Text(
-                    stockText,
-                    style: TextStyle(
-                      color: stockColor,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 11.5,
-                    ),
-                  ),
+                  Text(stockText,
+                      style: TextStyle(
+                          color: stockColor,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 11.5)),
                 ],
               ),
             ),
@@ -458,11 +423,10 @@ class _Stepper extends StatelessWidget {
           _btn(Icons.remove, onMinus),
           SizedBox(
             width: 30,
-            child: Text(
-              '$qty',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
-            ),
+            child: Text('$qty',
+                textAlign: TextAlign.center,
+                style:
+                    const TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
           ),
           _btn(Icons.add, onAdd, enabled: canAdd),
         ],
@@ -510,8 +474,7 @@ class _CartBar extends StatelessWidget {
                   child: InkWell(
                     onTap: onOpen,
                     borderRadius: const BorderRadius.horizontal(
-                      left: Radius.circular(20),
-                    ),
+                        left: Radius.circular(20)),
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
                       child: Row(
@@ -523,10 +486,8 @@ class _CartBar extends StatelessWidget {
                               color: Colors.white.withAlpha(60),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(
-                              Icons.shopping_basket_outlined,
-                              color: Colors.white,
-                            ),
+                            child: const Icon(Icons.shopping_basket_outlined,
+                                color: Colors.white),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -534,22 +495,16 @@ class _CartBar extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  '${cart.itemCount} item • lihat keranjang',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 11.5,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                Text(
-                                  formatRupiah(cart.total),
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
+                                Text('${cart.itemCount} item • lihat keranjang',
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.w600)),
+                                Text(formatRupiah(cart.total),
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w800)),
                               ],
                             ),
                           ),
@@ -567,27 +522,19 @@ class _CartBar extends StatelessWidget {
                       onTap: onPay,
                       borderRadius: BorderRadius.circular(14),
                       child: const Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 18,
-                          vertical: 12,
-                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 18, vertical: 12),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              'Bayar',
-                              style: TextStyle(
-                                color: AppColors.orange,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 14,
-                              ),
-                            ),
+                            Text('Bayar',
+                                style: TextStyle(
+                                    color: AppColors.orange,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 14)),
                             SizedBox(width: 4),
-                            Icon(
-                              Icons.arrow_forward,
-                              size: 16,
-                              color: AppColors.orange,
-                            ),
+                            Icon(Icons.arrow_forward,
+                                size: 16, color: AppColors.orange),
                           ],
                         ),
                       ),
@@ -615,9 +562,8 @@ class _CartSheet extends StatelessWidget {
       builder: (ctx, _) {
         final lines = cart.lines;
         return ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(ctx).size.height * 0.75,
-          ),
+          constraints:
+              BoxConstraints(maxHeight: MediaQuery.of(ctx).size.height * 0.75),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
             child: Column(
@@ -638,19 +584,14 @@ class _CartSheet extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Keranjang (${cart.itemCount} item)',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 16,
-                      ),
-                    ),
+                    Text('Keranjang (${cart.itemCount} item)',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w800, fontSize: 16)),
                     if (lines.isNotEmpty)
                       TextButton(
                         onPressed: cart.clear,
                         style: TextButton.styleFrom(
-                          foregroundColor: AppColors.danger,
-                        ),
+                            foregroundColor: AppColors.danger),
                         child: const Text('Kosongkan'),
                       ),
                   ],
@@ -660,10 +601,8 @@ class _CartSheet extends StatelessWidget {
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 32),
                     child: Center(
-                      child: Text(
-                        'Keranjang kosong',
-                        style: TextStyle(color: AppColors.muted),
-                      ),
+                      child: Text('Keranjang kosong',
+                          style: TextStyle(color: AppColors.muted)),
                     ),
                   )
                 else ...[
@@ -680,32 +619,23 @@ class _CartSheet extends StatelessWidget {
                           child: Row(
                             children: [
                               ProductThumb(
-                                product: l.product,
-                                size: 46,
-                                radius: 12,
-                              ),
+                                  product: l.product, size: 46, radius: 12),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      l.product.name,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 13.5,
-                                      ),
-                                    ),
-                                    Text(
-                                      formatRupiah(l.subtotal),
-                                      style: const TextStyle(
-                                        color: AppColors.orange,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 12.5,
-                                      ),
-                                    ),
+                                    Text(l.product.name,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 13.5)),
+                                    Text(formatRupiah(l.subtotal),
+                                        style: const TextStyle(
+                                            color: AppColors.orange,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 12.5)),
                                   ],
                                 ),
                               ),
@@ -725,21 +655,14 @@ class _CartSheet extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'Total',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
-                        ),
-                      ),
-                      Text(
-                        formatRupiah(cart.total),
-                        style: const TextStyle(
-                          color: _brown,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 20,
-                        ),
-                      ),
+                      const Text('Total',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w700, fontSize: 14)),
+                      Text(formatRupiah(cart.total),
+                          style: const TextStyle(
+                              color: _brown,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 20)),
                     ],
                   ),
                   const SizedBox(height: 14),

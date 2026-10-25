@@ -4,6 +4,7 @@ import '../widgets/qnex_bottom_bar.dart';
 import 'inventory_page.dart';
 import 'product_form_page.dart';
 import 'transaction_history_page.dart';
+import 'weekly_report_page.dart';
 
 /// ---------- Data dummy (nanti diganti data asli dari database) ----------
 class _Stat {
@@ -71,6 +72,13 @@ class _OwnerDashboardPageState extends State<OwnerDashboardPage> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const ProductFormPage()),
+    );
+  }
+
+  void _openReport() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const WeeklyReportPage()),
     );
   }
 
@@ -159,7 +167,7 @@ class _OwnerDashboardPageState extends State<OwnerDashboardPage> {
               _QuickAction(
                   icon: Icons.bar_chart_rounded,
                   label: 'Laporan\nPenjualan',
-                  onTap: () {}),
+                  onTap: _openReport),
             ],
           ),
           const SizedBox(height: 24),
@@ -557,7 +565,14 @@ class _OwnerDrawer extends StatelessWidget {
             ListTile(
                 leading: const Icon(Icons.bar_chart_rounded),
                 title: const Text('Laporan'),
-                onTap: () {}),
+                onTap: () {
+                  Navigator.pop(context); // tutup drawer
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const WeeklyReportPage()),
+                  );
+                }),
             const Spacer(),
             ListTile(
                 leading: const Icon(Icons.logout, color: AppColors.danger),

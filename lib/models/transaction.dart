@@ -5,9 +5,11 @@ class TrxLine {
   final String name;
   final int qty;
   final int price;
-  const TrxLine(this.name, this.qty, this.price);
+  final int? cost; // harga modal per unit; null = tidak diketahui
+  const TrxLine(this.name, this.qty, this.price, {this.cost});
 
   int get subtotal => qty * price;
+  int get costTotal => qty * (cost ?? 0);
 }
 
 class TrxItem {

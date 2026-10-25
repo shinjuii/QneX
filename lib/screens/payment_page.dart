@@ -49,7 +49,8 @@ class _PaymentPageState extends State<PaymentPage> {
   }
 
   List<TrxLine> get _trxLines => widget.cart.lines
-      .map((l) => TrxLine(l.product.name, l.qty, l.product.price))
+      .map((l) => TrxLine(l.product.name, l.qty, l.product.price,
+          cost: l.product.costPrice))
       .toList();
 
   void _payCash() {
