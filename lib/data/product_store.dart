@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../models/product.dart';
+import 'cart_controller.dart';
 
 /// Penyimpanan produk sementara (di memori) yang dipakai bersama semua halaman.
 /// Nanti isinya diganti dengan data dari database, bentuk pemakaiannya sama.
@@ -31,6 +32,16 @@ class ProductStore extends ChangeNotifier {
   void restock(Product p, int qty, {String note = 'Stok masuk'}) {
     p.stock += qty;
     p.history.insert(0, StockLog(DateTime.now(), qty, note));
+    notifyListeners();
+  }
+
+  /// Mengurangi stok sesuai isi keranjang saat penjualan berhasil.
+  void sell(List<CartLine> lines, String trxId) {
+    final now = DateTime.now();
+    for (final l in lines) {
+      l.product.stock = (l.product.stock - l.qty).clamp(0, 1 << 30).toInt();
+      l.product.history.insert(0, StockLog(now, -l.qty, 'Penjualan $trxId'));
+    }
     notifyListeners();
   }
 
@@ -65,6 +76,8 @@ class ProductStore extends ChangeNotifier {
     }
 
     _items.addAll([
+      mk('p10', 'Es Teh Manis', 'Minuman', 'Pcs', 5000, 2500, 28, 10, 60,
+          d(-1), null, 'Kasir', Icons.local_cafe),
       mk('p1', 'Indomie Goreng', 'Makanan', 'Bungkus', 3000, 2000, 19, 10, 100,
           DateTime(2026, 10, 9), null, 'Rak A1', Icons.ramen_dining),
       mk('p2', 'Susu UHT Cokelat 200ml', 'Minuman', 'Pcs', 6500, 5200, 32, 12,

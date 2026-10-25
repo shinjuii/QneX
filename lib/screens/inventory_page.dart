@@ -249,7 +249,7 @@ class _InventoryPageState extends State<InventoryPage> {
       ),
 
       floatingActionButtonLocation: QnexCartFab.location,
-      floatingActionButton: QnexCartFab(onPressed: () {}),
+      floatingActionButton: const QnexCartFab(),
       bottomNavigationBar: QnexBottomBar(
         currentIndex: 0,
         onTap: (i) {

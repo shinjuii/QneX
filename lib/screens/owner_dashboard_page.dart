@@ -178,7 +178,7 @@ class _OwnerDashboardPageState extends State<OwnerDashboardPage> {
 
       // Bottom bar sekarang tinggal dipanggil
       floatingActionButtonLocation: QnexCartFab.location,
-      floatingActionButton: QnexCartFab(onPressed: () {}),
+      floatingActionButton: const QnexCartFab(),
       bottomNavigationBar: QnexBottomBar(
         currentIndex: _tab,
         onTap: (i) => setState(() => _tab = i),

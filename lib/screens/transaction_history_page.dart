@@ -1,19 +1,10 @@
 import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
 import '../core/helpers.dart';
+import '../data/transaction_store.dart';
+import '../models/transaction.dart';
+import '../widgets/receipt_card.dart';
 import '../widgets/qnex_bottom_bar.dart';
-
-enum TrxStatus { berhasil, gagal }
-
-class TrxItem {
-  final String id;
-  final int amount;
-  final String method;
-  final DateTime time;
-  final TrxStatus status;
-
-  TrxItem(this.id, this.amount, this.method, this.time, this.status);
-}
 
 class TransactionHistoryPage extends StatefulWidget {
   const TransactionHistoryPage({super.key});
@@ -23,18 +14,28 @@ class TransactionHistoryPage extends StatefulWidget {
 }
 
 class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
-  // Data dummy (nanti diganti data dari database)
-  final List<TrxItem> _all = [
-    TrxItem('TRX250412001', 45000, 'QRIS', DateTime(2025, 4, 12, 14, 32), TrxStatus.berhasil),
-    TrxItem('TRX250412000', 25000, 'Tunai', DateTime(2025, 4, 12, 13, 17), TrxStatus.berhasil),
-    TrxItem('TRX250411099', 16000, 'QRIS', DateTime(2025, 4, 11, 17, 45), TrxStatus.berhasil),
-    TrxItem('TRX250411098', 32000, 'Tunai', DateTime(2025, 4, 11, 16, 20), TrxStatus.berhasil),
-    TrxItem('TRX250411097', 18000, 'QRIS', DateTime(2025, 4, 11, 15, 52), TrxStatus.gagal),
-  ];
+  final _store = TransactionStore.instance;
+  List<TrxItem> get _all => _store.items;
 
   String _query = '';
   TrxStatus? _status; // null = Semua
   String? _method; // null = semua metode
+
+  @override
+  void initState() {
+    super.initState();
+    _store.addListener(_onStoreChanged);
+  }
+
+  @override
+  void dispose() {
+    _store.removeListener(_onStoreChanged);
+    super.dispose();
+  }
+
+  void _onStoreChanged() {
+    if (mounted) setState(() {});
+  }
 
   List<TrxItem> get _filtered {
     return _all.where((t) {
@@ -189,7 +190,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
       ),
 
       floatingActionButtonLocation: QnexCartFab.location,
-      floatingActionButton: QnexCartFab(onPressed: () {}),
+      floatingActionButton: const QnexCartFab(),
       bottomNavigationBar: QnexBottomBar(
         currentIndex: 0,
         onTap: (i) {
@@ -248,7 +249,7 @@ class _TrxCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
-          onTap: () {}, // TODO: buka detail transaksi
+          onTap: () => _showReceipt(context, item),
           borderRadius: BorderRadius.circular(12),
           child: Container(
             padding: const EdgeInsets.all(14),
@@ -300,4 +301,21 @@ class _TrxCard extends StatelessWidget {
       ),
     );
   }
+}
+
+void _showReceipt(BuildContext context, TrxItem t) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: AppColors.bgSoft,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (_) => SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+        child: ReceiptCard(trx: t),
+      ),
+    ),
+  );
 }

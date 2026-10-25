@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
+import '../screens/kasir_page.dart';
 
 /// Cara pakai di Scaffold mana pun:
 ///
 /// Scaffold(
 ///   floatingActionButtonLocation: QnexCartFab.location,
-///   floatingActionButton: QnexCartFab(onPressed: () {}),
+///   floatingActionButton: const QnexCartFab(),  // otomatis membuka Kasir
 ///   bottomNavigationBar: QnexBottomBar(currentIndex: 0, onTap: (i) {}),
 ///   ...
 /// )
@@ -65,16 +66,20 @@ class QnexBottomBar extends StatelessWidget {
 }
 
 /// Tombol keranjang bulat di tengah bottom bar.
+/// Kalau onPressed tidak diisi, otomatis membuka halaman Kasir/POS.
 class QnexCartFab extends StatelessWidget {
-  final VoidCallback onPressed;
-  const QnexCartFab({super.key, required this.onPressed});
+  final VoidCallback? onPressed;
+  const QnexCartFab({super.key, this.onPressed});
 
   static const location = FloatingActionButtonLocation.centerDocked;
 
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      onPressed: onPressed,
+      onPressed: onPressed ??
+          () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const KasirPage()),
+              ),
       backgroundColor: AppColors.orange,
       foregroundColor: Colors.white,
       elevation: 2,
