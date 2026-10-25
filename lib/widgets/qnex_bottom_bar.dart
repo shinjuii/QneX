@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
 import '../screens/kasir_page.dart';
+import '../screens/profile_page.dart';
 
 /// Cara pakai di Scaffold mana pun:
 ///
@@ -61,6 +62,18 @@ class QnexBottomBar extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Navigasi standar untuk tab bottom bar dari halaman biasa:
+/// Home kembali ke beranda, Setting membuka halaman Pengaturan.
+void qnexGoTo(BuildContext context, int index) {
+  if (index == 0) {
+    Navigator.of(context).popUntil((r) => r.isFirst);
+  } else if (index == 4) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const ProfilePage()),
     );
   }
 }

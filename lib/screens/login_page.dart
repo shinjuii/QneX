@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
 import '../core/helpers.dart';
+import '../data/session_store.dart';
 import '../widgets/auth_illustration.dart';
 import '../widgets/auth_widgets.dart';
 import 'owner_dashboard_page.dart';
@@ -38,6 +39,7 @@ class _LoginPageState extends State<LoginPage> {
     await Future.delayed(const Duration(milliseconds: 1200));
     if (!mounted) return;
     setState(() => _loading = false);
+    SessionStore.instance.signIn(_identifier.text.trim());
 
     // TODO: arahkan sesuai peran: owner -> dashboard owner,
     // karyawan -> halaman kasir. Sementara semua ke dashboard owner.

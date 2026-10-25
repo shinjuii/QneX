@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
 import '../widgets/qnex_bottom_bar.dart';
+import '../data/session_store.dart';
+import '../widgets/logout.dart';
 import 'inventory_page.dart';
 import 'product_form_page.dart';
 import 'transaction_history_page.dart';
@@ -119,7 +121,7 @@ class _OwnerDashboardPageState extends State<OwnerDashboardPage> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
         children: [
-          Text('Halo, Owner',
+          Text('Halo, ${SessionStore.instance.current.name}',
               style: Theme.of(context)
                   .textTheme
                   .titleLarge
@@ -189,7 +191,13 @@ class _OwnerDashboardPageState extends State<OwnerDashboardPage> {
       floatingActionButton: const QnexCartFab(),
       bottomNavigationBar: QnexBottomBar(
         currentIndex: _tab,
-        onTap: (i) => setState(() => _tab = i),
+        onTap: (i) {
+          if (i == 4) {
+            qnexGoTo(context, i); // buka Pengaturan
+          } else {
+            setState(() => _tab = i);
+          }
+        },
       ),
     );
   }
@@ -577,7 +585,7 @@ class _OwnerDrawer extends StatelessWidget {
             ListTile(
                 leading: const Icon(Icons.logout, color: AppColors.danger),
                 title: const Text('Keluar'),
-                onTap: () {}),
+                onTap: () => confirmAndLogout(context)),
           ],
         ),
       ),

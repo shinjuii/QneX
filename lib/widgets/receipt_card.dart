@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
 import '../core/helpers.dart';
+import '../data/session_store.dart';
 import '../models/transaction.dart';
 
 /// Struk transaksi (dipakai di halaman sukses dan detail riwayat).
@@ -33,6 +34,7 @@ class ReceiptCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ok = trx.status == TrxStatus.berhasil;
+    final biz = SessionStore.instance.business;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -47,8 +49,13 @@ class ReceiptCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Struk Pembelian',
-                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+              Flexible(
+                child: Text(biz.name.isEmpty ? 'Struk Pembelian' : biz.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w800, fontSize: 15)),
+              ),
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
@@ -116,6 +123,18 @@ class ReceiptCard extends StatelessWidget {
             _row('Tunai diterima', formatRupiah(trx.cashReceived!)),
             _row('Kembalian', formatRupiah(trx.change)),
           ],
+          if (biz.receiptNote.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 14),
+              child: Center(
+                child: Text(biz.receiptNote,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        color: AppColors.muted,
+                        fontSize: 11.5,
+                        fontStyle: FontStyle.italic)),
+              ),
+            ),
         ],
       ),
     );

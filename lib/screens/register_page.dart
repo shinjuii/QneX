@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
 import '../core/helpers.dart';
+import '../data/session_store.dart';
 import '../widgets/auth_widgets.dart';
 
 /// ---------- Halaman Daftar ----------
@@ -44,6 +45,11 @@ class _RegisterPageState extends State<RegisterPage> {
     await Future.delayed(const Duration(milliseconds: 1200));
     if (!mounted) return;
     setState(() => _loading = false);
+    SessionStore.instance.register(
+      name: _name.text.trim(),
+      businessName: _business.text.trim(),
+      identifier: _identifier.text.trim(),
+    );
     Navigator.of(context).pop(true); // kembali ke Login + pesan sukses
   }
 

@@ -7,7 +7,8 @@ import '../core/helpers.dart';
 
 /// Membuka pilihan Galeri / Kamera lalu mengembalikan foto yang dipilih
 /// (dalam bentuk bytes), atau null kalau dibatalkan.
-Future<Uint8List?> pickProductPhoto(BuildContext context) async {
+Future<Uint8List?> pickProductPhoto(BuildContext context,
+    {String title = 'Foto Produk'}) async {
   final source = await showModalBottomSheet<ImageSource>(
     context: context,
     backgroundColor: Colors.white,
@@ -29,7 +30,7 @@ Future<Uint8List?> pickProductPhoto(BuildContext context) async {
               ),
             ),
             const SizedBox(height: 14),
-            const Text('Foto Produk',
+            Text(title,
                 style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
             const SizedBox(height: 6),
             ListTile(

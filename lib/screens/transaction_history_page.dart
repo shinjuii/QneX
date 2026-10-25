@@ -193,10 +193,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
       floatingActionButton: const QnexCartFab(),
       bottomNavigationBar: QnexBottomBar(
         currentIndex: 0,
-        onTap: (i) {
-          if (i == 0) Navigator.of(context).popUntil((r) => r.isFirst);
-          // TODO: tab lain
-        },
+        onTap: (i) => qnexGoTo(context, i),
       ),
     );
   }
