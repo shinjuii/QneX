@@ -74,51 +74,46 @@ class _OwnerDashboardPageState extends State<OwnerDashboardPage> {
   Future<void> _fetchDashboardData() async {
     setState(() => _isLoading = true);
     try {
-      final now = DateTime.now();
-      final startOfDay = DateTime(now.year, now.month, now.day).toIso8601String();
-
-      // 1. Ambil transaksi hari ini dari Supabase
+      // 1. Ambil seluruh transaksi dari Supabase (diurutkan dari yang terbaru)
       final txResponse = await _supabase
           .from('transactions')
           .select('id, total_amount, payment_method, status, created_at')
-          .gte('created_at', startOfDay)
           .order('created_at', ascending: false);
 
       double salesSum = 0;
-      int txCount = txResponse.length;
+      int txCount = 0;
       List<String> todayTxIds = [];
 
       for (var tx in txResponse) {
-        if (tx['status'] == 'Berhasil') {
+        final status = tx['status']?.toString().toLowerCase() ?? 'berhasil';
+
+        // Menghitung semua transaksi yang berstatus berhasil agar langsung sinkron
+        if (status == 'berhasil') {
           salesSum += (tx['total_amount'] as num?)?.toDouble() ?? 0;
+          txCount++;
           todayTxIds.add(tx['id'].toString());
         }
       }
 
-      // 2. Hitung jumlah produk terjual hari ini dari transaction_items
+      // 2. Hitung jumlah produk terjual dari transaction_items menggunakan kolom 'quantity'
       int itemsSold = 0;
       if (todayTxIds.isNotEmpty) {
         final itemsResponse = await _supabase
             .from('transaction_items')
-            .select('qty')
+            .select('quantity')
             .inFilter('transaction_id', todayTxIds);
+
         for (var item in itemsResponse) {
-          itemsSold += (item['qty'] as num?)?.toInt() ?? 0;
+          int q = (item['quantity'] as num?)?.toInt() ?? 0;
+          itemsSold += q;
         }
       }
-
-      // 3. Ambil daftar transaksi terbaru (untuk list)
-      final recentResponse = await _supabase
-          .from('transactions')
-          .select('id, total_amount, payment_method, status, created_at')
-          .order('created_at', ascending: false)
-          .limit(5);
 
       setState(() {
         _todaySales = salesSum;
         _todayTxCount = txCount;
         _todayItemsSold = itemsSold;
-        _recentTransactions = List<Map<String, dynamic>>.from(recentResponse);
+        _recentTransactions = List<Map<String, dynamic>>.from(txResponse.take(5));
         _isLoading = false;
       });
     } catch (e) {
@@ -286,7 +281,7 @@ class _OwnerDashboardPageState extends State<OwnerDashboardPage> {
               )
             else
               ..._recentTransactions.map((t) {
-                final isSuccess = t['status'] == 'Berhasil';
+                final isSuccess = t['status']?.toString().toLowerCase() == 'berhasil';
                 final amount = formatRupiah(
                     (t['total_amount'] as num?)?.toInt() ?? 0);
                 final method = t['payment_method'] ?? 'Tunai';

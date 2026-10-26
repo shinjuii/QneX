@@ -25,6 +25,8 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
   void initState() {
     super.initState();
     _store.addListener(_onStoreChanged);
+    // Memuat ulang data dari Supabase saat halaman dibuka
+    _store.loadTransactions();
   }
 
   @override
@@ -115,11 +117,11 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                   child: TextField(
                     onChanged: (v) => setState(() => _query = v),
                     decoration: InputDecoration(
-                      hintText: 'Cari transaksi',
+                      hintText: 'Cari ID transaksi',
                       hintStyle: const TextStyle(
                           color: AppColors.idGrey, fontSize: 14),
                       prefixIcon:
-                          const Icon(Icons.search, color: AppColors.navy),
+                      const Icon(Icons.search, color: AppColors.navy),
                       filled: true,
                       fillColor: Colors.white,
                       contentPadding: const EdgeInsets.symmetric(vertical: 0),
@@ -175,16 +177,21 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
 
           // Daftar transaksi
           Expanded(
-            child: items.isEmpty
+            child: _store.items.isEmpty
                 ? const Center(
-                    child: Text('Transaksi tidak ditemukan',
-                        style: TextStyle(color: AppColors.idGrey)),
-                  )
+              child: Text('Belum ada riwayat transaksi',
+                  style: TextStyle(color: AppColors.idGrey)),
+            )
+                : items.isEmpty
+                ? const Center(
+              child: Text('Transaksi tidak ditemukan',
+                  style: TextStyle(color: AppColors.idGrey)),
+            )
                 : ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                    itemCount: items.length,
-                    itemBuilder: (_, i) => _TrxCard(item: items[i]),
-                  ),
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+              itemCount: items.length,
+              itemBuilder: (_, i) => _TrxCard(item: items[i]),
+            ),
           ),
         ],
       ),
@@ -279,7 +286,7 @@ class _TrxCard extends StatelessWidget {
                 ),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: ok ? AppColors.successBg : AppColors.dangerBg,
                     borderRadius: BorderRadius.circular(8),

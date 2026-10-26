@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/app_colors.dart';
@@ -50,7 +51,7 @@ class _PaymentPageState extends State<PaymentPage> {
 
   List<TrxLine> get _trxLines => widget.cart.lines
       .map((l) => TrxLine(l.product.name, l.qty, l.product.price,
-          cost: l.product.costPrice))
+      cost: l.product.costPrice))
       .toList();
 
   void _payCash() {
@@ -70,12 +71,10 @@ class _PaymentPageState extends State<PaymentPage> {
     if (result == true) {
       _finish(method: 'QRIS', orderId: orderId);
     } else if (result == false) {
-      // QR kedaluwarsa: dicatat sebagai transaksi gagal, stok tidak berubah.
       _trx.add(TrxItem(orderId, _total, 'QRIS', DateTime.now(),
           TrxStatus.gagal, lines: _trxLines));
       showSnack(context, 'QR kedaluwarsa. Transaksi dicatat sebagai gagal.');
     }
-    // result == null: kasir membatalkan, tidak ada yang dicatat.
   }
 
   void _finish({required String method, int? cash, String? orderId}) {
@@ -83,8 +82,8 @@ class _PaymentPageState extends State<PaymentPage> {
     final item = TrxItem(id, _total, method, DateTime.now(), TrxStatus.berhasil,
         lines: _trxLines, cashReceived: cash);
 
-    _products.sell(widget.cart.lines, id); // kurangi stok
-    _trx.add(item); // masuk riwayat transaksi
+    _products.sell(widget.cart.lines, id); // kurangi stok di supabase
+    _trx.add(item); // simpan transaksi
     widget.cart.clear();
 
     Navigator.pushReplacement(context, fadeRoute(PaymentSuccessPage(trx: item)));
@@ -129,7 +128,6 @@ class _PaymentPageState extends State<PaymentPage> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
         children: [
-          // Ringkasan pesanan
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -142,7 +140,7 @@ class _PaymentPageState extends State<PaymentPage> {
               children: [
                 const Text('Ringkasan Pesanan',
                     style:
-                        TextStyle(fontWeight: FontWeight.w800, fontSize: 14.5)),
+                    TextStyle(fontWeight: FontWeight.w800, fontSize: 14.5)),
                 const SizedBox(height: 10),
                 for (final l in lines)
                   Padding(
@@ -246,12 +244,12 @@ class _PaymentPageState extends State<PaymentPage> {
           decoration: InputDecoration(
             prefixText: 'Rp ',
             prefixStyle:
-                const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+            const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
             hintText: '0',
             filled: true,
             fillColor: Colors.white,
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: const BorderSide(color: AppColors.line),
@@ -268,13 +266,13 @@ class _PaymentPageState extends State<PaymentPage> {
           runSpacing: 4,
           children: _suggestions
               .map((v) => ActionChip(
-                    label: Text(v == _total ? 'Uang pas' : formatRupiah(v)),
-                    labelStyle: const TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.w600),
-                    backgroundColor: Colors.white,
-                    side: const BorderSide(color: AppColors.line),
-                    onPressed: () => setState(() => _cashCtrl.text = '$v'),
-                  ))
+            label: Text(v == _total ? 'Uang pas' : formatRupiah(v)),
+            labelStyle: const TextStyle(
+                fontSize: 12, fontWeight: FontWeight.w600),
+            backgroundColor: Colors.white,
+            side: const BorderSide(color: AppColors.line),
+            onPressed: () => setState(() => _cashCtrl.text = '$v'),
+          ))
               .toList(),
         ),
         const SizedBox(height: 12),

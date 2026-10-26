@@ -30,7 +30,7 @@ class ProductStore extends ChangeNotifier {
 
       for (var row in response) {
         _items.add(Product(
-          id: row['id']?.toString() ?? DateTime.now().microsecondsSinceEpoch.toString(),
+          id: row['id']?.toString() ?? '',
           name: row['name'] ?? '',
           category: row['category'] ?? 'Umum',
           unit: row['unit'] ?? 'Pcs',
@@ -54,7 +54,7 @@ class ProductStore extends ChangeNotifier {
     }
   }
 
-  /// Menambah produk baru ke Supabase dengan data lengkap
+  /// Menambah produk baru ke Supabase
   Future<void> add(Product p) async {
     try {
       await _supabase.from('products').insert({
@@ -70,7 +70,7 @@ class ProductStore extends ChangeNotifier {
         'barcode': 'BC-${DateTime.now().millisecondsSinceEpoch}',
         'expiry': p.expiry?.toIso8601String(),
       });
-      await loadProducts(); // Refresh data dari server
+      await loadProducts();
     } catch (e) {
       debugPrint('Gagal menambah produk ke Supabase: $e');
     }
@@ -107,35 +107,36 @@ class ProductStore extends ChangeNotifier {
     try {
       double totalAmount = lines.fold(0, (sum, l) => sum + (l.product.price * l.qty));
 
-      // Simpan ringkasan transaksi ke tabel 'transactions'
-      await _supabase.from('transactions').insert({
-        'id': trxId,
+      // 1. Simpan ringkasan transaksi ke tabel 'transactions'
+      // Menggunakan kolom sesuai skema Supabase: total_amount, payment_method, status
+      final trxResponse = await _supabase.from('transactions').insert({
         'total_amount': totalAmount,
         'payment_method': 'Tunai',
         'status': 'Berhasil',
         'created_at': now.toIso8601String(),
-      });
+      }).select('id').single();
 
-      // Update stok produk & simpan item transaksi
+      final String insertedTrxId = trxResponse['id'].toString();
+
+      // 2. Update stok produk & simpan item transaksi
       for (final l in lines) {
         l.product.stock = (l.product.stock - l.qty).clamp(0, 1 << 30).toInt();
         l.product.history.insert(0, StockLog(now, -l.qty, 'Penjualan $trxId'));
 
-        // Update stok di database
+        // Update stok di database produk
         await _supabase.from('products').update({'stock': l.product.stock}).eq('id', l.product.id);
 
-        // Simpan detail item ke 'transaction_items'
+        // Simpan detail item ke 'transaction_items' sesuai skema: quantity & price_at_sale
         await _supabase.from('transaction_items').insert({
-          'transaction_id': trxId,
+          'transaction_id': insertedTrxId,
           'product_id': l.product.id,
-          'product_name': l.product.name,
-          'qty': l.qty,
-          'price': l.product.price,
+          'quantity': l.qty,
+          'price_at_sale': l.product.price,
         });
       }
       notifyListeners();
     } catch (e) {
-      debugPrint('Gagal memproses penjualan ke Supabase: $e');
+      debugPrint('ERROR SAAT MENJUAL PRODUK: $e');
     }
   }
 
